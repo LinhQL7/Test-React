@@ -1,43 +1,68 @@
-import React, { useEffect } from 'react';
-import { getListUser } from '../api/adminApi';
+import React, { useState, useEffect } from 'react';
+import { getListUser, updateInfo, updateCoin, updateStatus } from '../api/adminApi';
+import InfoModal from '../Modal/InfoModal';
+import CoinModal from '../Modal/CoinModal';
+import StatusModal from '../Modal/StatusModal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function UserPage() {
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
+    const [users, setUsers] = useState([]);
+    const [showInfo, setShowInfo] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isCoinModalOpen, setIsCoinModalOpen] = useState(false);
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
 
-    const users = [
-        { id: 1, name: 'John Doe', phone: '123-456-7890', status: 'Active', coin: 100 },
-        { id: 2, name: 'Jane Smith', phone: '987-654-3210', status: 'Inactive', coin: 200 }
-    ];
-
-    const handleViewInfo = (id) => {
-        console.log(`Viewing info for user with id: ${id}`);
-        // Logic để xem thông tin chi tiết của user
+    const handleInfo = (id) => {
+        setSelectedUser(id); // Lưu thông tin người dùng được chọn
+        setShowInfo(true); // Hiển thị modal
+        //     toast.success('Xem thông tin thành công!');
+        //    }catch (error) {
+        //         toast.error('Xem thông tin thất bại!');
+        //     }
     };
 
-    const handleViewCoin = (id) => {
-        console.log(`Viewing coin for user with id: ${id}`);
-        // Logic để xem số lượng coin của user
+    const handleCoin = (id) => {
+        setSelectedUserId(id); // Lưu id user để cập nhật
+        setIsCoinModalOpen(true); // Mở modal
+        //     toast.success('Xem coin thành công!');
+        //   }catch (error) {
+        //         toast.error('Xem coin thất bại!');
+        //     }
     };
 
-    const handleViewStatus = (id) => {
-        console.log(`Viewing status for user with id: ${id}`);
-        // Logic để xem trạng thái của user
+    const handleStatus = (id) => {
+        setSelectedUserId(id); // Lưu id user để cập nhật
+        setIsStatusModalOpen(true); // Mở modal
+        //     toast.success('Cập nhật trạng thái thành công!');
+        // }catch (error) {
+        //         toast.error('Cập nhật trạng thái thất bại!');
+        //     }
     };
 
-    const handleGetListUser = async (e) => {
-        // e.preventDefault();
+    const handleUpdateUser = (updatedUser) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+        );
+    };
+
+    const handleUpdateCoin = ({ coin, actionType }) => {
+        console.log(`Updating coin for user with id: ${selectedUserId}`);
+        console.log(`Action: ${actionType}, Coin: ${coin}`);
+        // Logic cập nhật coin cho user (có thể gọi API tại đây)
+    };
+
+    const handleUpdateStatus = ({ status }) => {
+        console.log(`Updating status for user with id: ${selectedUserId}`);
+        console.log(`New Status: ${status}`);
+        // Logic cập nhật trạng thái cho user (có thể gọi API tại đây)
+    };
+
+    const handleGetListUser = async () => {
         try {
-            const input = {
-                // phone: phone,
-                // name: name,
-                // email: email,
-                // password: password,
-                // password_confirmation: confirmPassword,
-            }
-            const response = await getListUser(input);
-
-            console.log(response);
+            const response = await getListUser();
+            setUsers(response.data.data);
         } catch (error) {
             console.log(error);
         }
@@ -48,35 +73,63 @@ function UserPage() {
     }, []);
 
     return (
-        <table style={styles.table}>
-            <thead>
-                <tr>
-                    <th style={styles.th}>Tên</th>
-                    <th style={styles.th}>Số điện thoại</th>
-                    <th style={styles.th}>Trạng thái</th>
-                    <th style={styles.th}>Coin</th>
-                    <th style={styles.th}>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                {users.map((user) => (
-                    <tr key={user.id} style={styles.tr}>
-                        <td style={styles.td}>{user.name}</td>
-                        <td style={styles.td}>{user.phone}</td>
-                        <td style={styles.td}>{user.status}</td>
-                        <td style={styles.td}>{user.coin}</td>
-                        <td style={styles.tds}>
-                            <button style={styles.infoButton} onClick={() => handleViewInfo(user.id)}>Thông tin</button>
-                            <button style={styles.coinButton} onClick={() => handleViewCoin(user.id)}>Coin</button>
-                            <button style={styles.statusButton} onClick={() => handleViewStatus(user.id)}>Trạng thái</button>
-                        </td>
+        <div>
+            <table style={styles.table}>
+                <thead>
+                    <tr>
+                        <th style={styles.th}>Tên</th>
+                        <th style={styles.th}>Số điện thoại</th>
+                        <th style={styles.th}>Trạng thái</th>
+                        <th style={styles.th}>Coin</th>
+                        <th style={styles.th}>Thao tác</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
-    );
-};
+                </thead>
+                <tbody>
+                    {users.map((user) => (
+                        <tr key={user.id} style={styles.tr}>
+                            <td style={styles.td}>{user.name}</td>
+                            <td style={styles.td}>{user.phone}</td>
+                            <td style={styles.td}>{user.status}</td>
+                            <td style={styles.td}>{user.coin}</td>
+                            <td style={styles.tds}>
+                                <button style={styles.infoButton} onClick={() => handleInfo(user.id)}>Thông tin</button>
+                                <button style={styles.coinButton} onClick={() => handleCoin(user.id)}>Coin</button>
+                                <button style={styles.statusButton} onClick={() => handleStatus(user.id)}>Trạng thái</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
+            {/* Modal thông tin */}
+            <InfoModal
+                show={showInfo}
+                onClose={() => setShowInfo(false)}
+                userInfo={selectedUser}
+                updateUser={handleUpdateUser}
+            />
+
+            {/* Modal cập nhật coin */}
+            <CoinModal
+                isOpen={isCoinModalOpen}
+                onClose={() => setIsCoinModalOpen(false)}
+                onSubmit={handleUpdateCoin}
+            />
+
+            {/* Modal cập nhật trạng thái */}
+            <StatusModal
+                isOpen={isStatusModalOpen}
+                onClose={() => setIsStatusModalOpen(false)}
+                onSubmit={handleUpdateStatus}
+            />
+
+            {/* Container để hiển thị thông báo */}
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+        </div>
+
+    );
+
+};
 const styles = {
     // tableContainer: {
     //     width: '100%',
