@@ -41,24 +41,6 @@ function UserPage() {
         //     }
     };
 
-    const handleUpdateUser = (updatedUser) => {
-        setUsers((prevUsers) =>
-            prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-        );
-    };
-
-    const handleUpdateCoin = ({ coin, actionType }) => {
-        console.log(`Updating coin for user with id: ${selectedUserId}`);
-        console.log(`Action: ${actionType}, Coin: ${coin}`);
-        // Logic cập nhật coin cho user (có thể gọi API tại đây)
-    };
-
-    const handleUpdateStatus = ({ status }) => {
-        console.log(`Updating status for user with id: ${selectedUserId}`);
-        console.log(`New Status: ${status}`);
-        // Logic cập nhật trạng thái cho user (có thể gọi API tại đây)
-    };
-
     const handleGetListUser = async () => {
         try {
             const response = await getListUser();
@@ -106,21 +88,19 @@ function UserPage() {
                 show={showInfo}
                 onClose={() => setShowInfo(false)}
                 userInfo={selectedUser}
-                updateUser={handleUpdateUser}
             />
 
             {/* Modal cập nhật coin */}
             <CoinModal
                 isOpen={isCoinModalOpen}
                 onClose={() => setIsCoinModalOpen(false)}
-                onSubmit={handleUpdateCoin}
+                userInfo={selectedUser}
             />
 
             {/* Modal cập nhật trạng thái */}
             <StatusModal
                 isOpen={isStatusModalOpen}
                 onClose={() => setIsStatusModalOpen(false)}
-                onSubmit={handleUpdateStatus}
             />
 
             {/* Container để hiển thị thông báo */}

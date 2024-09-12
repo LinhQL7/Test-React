@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { updateCoin } from '../api/adminApi';
 
-function CoinModal({ isOpen, onClose, onSubmit }) {
+function CoinModal({ isOpen, onClose, userInfo }) {
+    console.log(userInfo);
     const [coin, setCoin] = useState(0); // state để lưu giá trị coin
     const [actionType, setActionType] = useState('tăng'); // state để lưu loại hành động
+    const [rowId, setRowId] = useState(userInfo ? userInfo.id : "");
 
     // Xử lý thay đổi số coin
     const handleCoinChange = (e) => {
         setCoin(e.target.value);
+
     };
 
     // Xử lý thay đổi loại hành động
@@ -14,13 +18,41 @@ function CoinModal({ isOpen, onClose, onSubmit }) {
         setActionType(e.target.value);
     };
 
+    useEffect(() => {
+        if (userInfo) {
+            setRowId(userInfo.id || "");
+        } else {
+            setRowId("");
+        }
+    }, [userInfo]);
+
     // Xử lý khi submit
     const handleCoin = () => {
-        onSubmit({ coin, actionType }); // Gửi dữ liệu lên parent component
+        // onSubmit({ coin, actionType }); // Gửi dữ liệu lên parent component
         onClose(); // Đóng modal
     };
 
     if (!isOpen) return null; // Không hiển thị modal nếu isOpen là false
+
+    const handleUpdateCoin = async () => {
+        try {
+            const input = {
+                coin,
+                actionType,
+            };
+
+            const response = await updateCoin(rowId, input); // Cập nhật thông tin người dùng
+
+            if (response) {
+                console.log("update coin success");
+                // onSubmit({ coin, actionType });
+                onClose(); // Đóng modal sau khi lưu
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
 
     return (
         <div style={styles.modalOverlay}>
@@ -51,7 +83,7 @@ function CoinModal({ isOpen, onClose, onSubmit }) {
                     </div>
                 </div>
                 <div style={styles.modalFooter}>
-                    <button style={styles.buttonEdit} onClick={handleCoin}>
+                    <button style={styles.buttonEdit} onClick={handleUpdateCoin}>
                         Sửa
                     </button>
                     <button style={styles.buttonCancel} onClick={onClose}>

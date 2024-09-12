@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { updateStatus } from '../api/adminApi';
 function StatusModal({ isOpen, onClose, onSubmit }) {
     const [status, setStatus] = useState('hoạt động'); // state để lưu trạng thái
 
@@ -15,6 +15,24 @@ function StatusModal({ isOpen, onClose, onSubmit }) {
     };
 
     if (!isOpen) return null; // Không hiển thị modal nếu isOpen là false
+
+    const handleUpdateStatus = async () => {
+        try {
+            const input = {
+                status,
+            };
+
+            const response = await updateStatus(input); // Cập nhật thông tin người dùng
+
+            if (response) {
+                console.log("update status success");
+
+                onClose(); // Đóng modal sau khi lưu
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <div style={styles.modalOverlay}>
@@ -35,7 +53,7 @@ function StatusModal({ isOpen, onClose, onSubmit }) {
                     </div>
                 </div>
                 <div style={styles.modalFooter}>
-                    <button style={styles.buttonEdit} onClick={handleStatus}>
+                    <button style={styles.buttonEdit} onClick={handleUpdateStatus}>
                         Sửa
                     </button>
                     <button style={styles.buttonCancel} onClick={onClose}>
