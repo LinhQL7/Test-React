@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { updateStatus } from '../api/adminApi';
-function StatusModal({ isOpen, onClose, onSubmit }) {
+function StatusModal({ onClose, userInfo }) {
     const [status, setStatus] = useState('hoạt động'); // state để lưu trạng thái
+    const [rowId, setRowId] = useState('');
 
     // Xử lý thay đổi trạng thái
     const handleStatusChange = (e) => {
@@ -9,12 +10,12 @@ function StatusModal({ isOpen, onClose, onSubmit }) {
     };
 
     // Xử lý khi submit
-    const handleStatus = () => {
-        onSubmit({ status }); // Gửi dữ liệu lên parent component
-        onClose(); // Đóng modal
-    };
+    // const handleStatus = () => {
+    //     onSubmit({ status }); // Gửi dữ liệu lên parent component
+    //     onClose(); // Đóng modal
+    // };
 
-    if (!isOpen) return null; // Không hiển thị modal nếu isOpen là false
+    // if (!isOpen) return null; // Không hiển thị modal nếu isOpen là false
 
     const handleUpdateStatus = async () => {
         try {
@@ -22,7 +23,7 @@ function StatusModal({ isOpen, onClose, onSubmit }) {
                 status,
             };
 
-            const response = await updateStatus(input); // Cập nhật thông tin người dùng
+            const response = await updateStatus(rowId, input); // Cập nhật thông tin người dùng
 
             if (response) {
                 console.log("update status success");
@@ -33,6 +34,14 @@ function StatusModal({ isOpen, onClose, onSubmit }) {
             console.log(error);
         }
     };
+
+    useEffect(() => {
+        if (userInfo) {
+            setRowId(userInfo.id || "");
+        } else {
+            setRowId("");
+        }
+    }, []);
 
     return (
         <div style={styles.modalOverlay}>
