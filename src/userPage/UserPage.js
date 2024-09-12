@@ -3,8 +3,8 @@ import { getListUser, updateInfo, updateCoin, updateStatus } from '../api/adminA
 import InfoModal from '../Modal/InfoModal';
 import CoinModal from '../Modal/CoinModal';
 import StatusModal from '../Modal/StatusModal';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import { toast, ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 function UserPage() {
     const [users, setUsers] = useState([]);
@@ -14,8 +14,8 @@ function UserPage() {
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
 
-    const handleInfo = (id) => {
-        setSelectedUser(id); // Lưu thông tin người dùng được chọn
+    const handleInfo = (user) => {
+        setSelectedUser(user); // Lưu thông tin người dùng được chọn
         setShowInfo(true); // Hiển thị modal
         //     toast.success('Xem thông tin thành công!');
         //    }catch (error) {
@@ -23,8 +23,8 @@ function UserPage() {
         //     }
     };
 
-    const handleCoin = (id) => {
-        setSelectedUserId(id); // Lưu id user để cập nhật
+    const handleCoin = (user) => {
+        setSelectedUser(user); // Lưu id user để cập nhật
         setIsCoinModalOpen(true); // Mở modal
         //     toast.success('Xem coin thành công!');
         //   }catch (error) {
@@ -32,8 +32,8 @@ function UserPage() {
         //     }
     };
 
-    const handleStatus = (id) => {
-        setSelectedUserId(id); // Lưu id user để cập nhật
+    const handleStatus = (user) => {
+        setSelectedUser(user); // Lưu id user để cập nhật
         setIsStatusModalOpen(true); // Mở modal
         //     toast.success('Cập nhật trạng thái thành công!');
         // }catch (error) {
@@ -92,9 +92,9 @@ function UserPage() {
                             <td style={styles.td}>{user.status}</td>
                             <td style={styles.td}>{user.coin}</td>
                             <td style={styles.tds}>
-                                <button style={styles.infoButton} onClick={() => handleInfo(user.id)}>Thông tin</button>
-                                <button style={styles.coinButton} onClick={() => handleCoin(user.id)}>Coin</button>
-                                <button style={styles.statusButton} onClick={() => handleStatus(user.id)}>Trạng thái</button>
+                                <button style={styles.infoButton} onClick={() => handleInfo(user)}>Thông tin</button>
+                                <button style={styles.coinButton} onClick={() => handleCoin(user)}>Coin</button>
+                                <button style={styles.statusButton} onClick={() => handleStatus(user)}>Trạng thái</button>
                             </td>
                         </tr>
                     ))}
@@ -124,7 +124,7 @@ function UserPage() {
             />
 
             {/* Container để hiển thị thông báo */}
-            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+            {/* <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} /> */}
         </div>
 
     );
